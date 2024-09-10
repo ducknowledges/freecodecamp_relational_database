@@ -44,13 +44,51 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: black_hole; Type: TABLE; Schema: public; Owner: freecodecamp
+--
+
+CREATE TABLE public.black_hole (
+    black_hole_id integer NOT NULL,
+    galaxy_id integer NOT NULL,
+    name character varying NOT NULL,
+    description text
+);
+
+
+ALTER TABLE public.black_hole OWNER TO freecodecamp;
+
+--
+-- Name: black_hole_black_hole_id_seq; Type: SEQUENCE; Schema: public; Owner: freecodecamp
+--
+
+CREATE SEQUENCE public.black_hole_black_hole_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.black_hole_black_hole_id_seq OWNER TO freecodecamp;
+
+--
+-- Name: black_hole_black_hole_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: freecodecamp
+--
+
+ALTER SEQUENCE public.black_hole_black_hole_id_seq OWNED BY public.black_hole.black_hole_id;
+
+
+--
 -- Name: galaxy; Type: TABLE; Schema: public; Owner: freecodecamp
 --
 
 CREATE TABLE public.galaxy (
     galaxy_id integer NOT NULL,
     name character varying NOT NULL,
-    description text
+    description text,
+    radius integer NOT NULL,
+    discovered_date date NOT NULL
 );
 
 
@@ -86,7 +124,8 @@ CREATE TABLE public.moon (
     moon_id integer NOT NULL,
     name character varying NOT NULL,
     planet_id integer NOT NULL,
-    description text
+    description text,
+    distance_from_planet_km numeric NOT NULL
 );
 
 
@@ -122,7 +161,8 @@ CREATE TABLE public.planet (
     planet_id integer NOT NULL,
     name character varying NOT NULL,
     star_id integer NOT NULL,
-    description text
+    description text,
+    has_life boolean NOT NULL
 );
 
 
@@ -158,7 +198,8 @@ CREATE TABLE public.star (
     star_id integer NOT NULL,
     name character varying NOT NULL,
     galaxy_id integer NOT NULL,
-    description text
+    description text,
+    distance_from_earth integer NOT NULL
 );
 
 
@@ -184,6 +225,13 @@ ALTER TABLE public.star_star_id_seq OWNER TO freecodecamp;
 --
 
 ALTER SEQUENCE public.star_star_id_seq OWNED BY public.star.star_id;
+
+
+--
+-- Name: black_hole black_hole_id; Type: DEFAULT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.black_hole ALTER COLUMN black_hole_id SET DEFAULT nextval('public.black_hole_black_hole_id_seq'::regclass);
 
 
 --
@@ -215,6 +263,12 @@ ALTER TABLE ONLY public.star ALTER COLUMN star_id SET DEFAULT nextval('public.st
 
 
 --
+-- Data for Name: black_hole; Type: TABLE DATA; Schema: public; Owner: freecodecamp
+--
+
+
+
+--
 -- Data for Name: galaxy; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
@@ -236,6 +290,13 @@ ALTER TABLE ONLY public.star ALTER COLUMN star_id SET DEFAULT nextval('public.st
 -- Data for Name: star; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
+
+
+--
+-- Name: black_hole_black_hole_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
+--
+
+SELECT pg_catalog.setval('public.black_hole_black_hole_id_seq', 1, false);
 
 
 --
@@ -264,6 +325,22 @@ SELECT pg_catalog.setval('public.planet_planet_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.star_star_id_seq', 1, false);
+
+
+--
+-- Name: black_hole black_hole_name_key; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.black_hole
+    ADD CONSTRAINT black_hole_name_key UNIQUE (name);
+
+
+--
+-- Name: black_hole black_hole_pkey; Type: CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.black_hole
+    ADD CONSTRAINT black_hole_pkey PRIMARY KEY (black_hole_id);
 
 
 --
@@ -328,6 +405,14 @@ ALTER TABLE ONLY public.star
 
 ALTER TABLE ONLY public.star
     ADD CONSTRAINT star_pkey PRIMARY KEY (star_id);
+
+
+--
+-- Name: black_hole black_hole_galaxy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.black_hole
+    ADD CONSTRAINT black_hole_galaxy_id_fkey FOREIGN KEY (galaxy_id) REFERENCES public.galaxy(galaxy_id);
 
 
 --
